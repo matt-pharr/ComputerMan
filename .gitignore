@@ -1,2 +1,3 @@
 discord-bot/.env
 .vscode/
+data/scores.json
