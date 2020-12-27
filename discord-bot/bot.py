@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import asyncio
 import json
 import random
+import datetime
 
 # scoredict = {}
 load_dotenv()
@@ -19,6 +20,8 @@ async def on_ready():
     print("Bot is ready.")
     print("Logged in as", client.user.display_name)
     try:
+        x = datetime.datetime
+        os.system('cp data/scores.json data/scores.json.' + str(x.now()).replace(' ','-') + '.bak')
         with open("data/scores.json", 'r') as f:
             scoredict = json.load(f)
     except Exception as e:
