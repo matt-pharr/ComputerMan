@@ -1,3 +1,5 @@
 discord-bot/.env
 .vscode/
-data/scores.json
+data/
+credentials.json
+token.pickle
