@@ -3,7 +3,7 @@ import asyncio
 from bs4 import BeautifulSoup
 import re
 
-async def main(rcs):
+async def check_is_student(rcs):
     base = r'http://info.rpi.edu/directory-search/'
     async with aiohttp.ClientSession() as session:
         async with session.get(base + str(rcs)) as resp:
@@ -31,16 +31,16 @@ async def main(rcs):
                 for i in range(len(l)):
                     if re.match(rcs + '@rpi.edu',l[i]) is not None:
                         # print('found')
-                        return (l[i+1] == '')
+                        return (l[i+1] == '',l[i+1])
 
-async def check_is_student(rcs):
-    val = await main(rcs)
+async def checkprint(rcs):
+    val = await check_is_student(rcs)
     print(val)
 
 if __name__ == "__main__":
     testcheckrcs = 'meuniv'
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(check_is_student(testcheckrcs))
+    loop.run_until_complete(checkprint(testcheckrcs))
 
 # page = Request(url,headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:33.0) Gecko/20120101 Firefox/33.0'})
 # print(urlopen(page).read())

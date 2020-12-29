@@ -3,3 +3,4 @@ discord-bot/.env
 data/
 credentials.json
 token.pickle
+discord-bot/locallib/__pycache__/

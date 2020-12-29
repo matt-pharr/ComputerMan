@@ -6,6 +6,7 @@ import asyncio
 import json
 import random
 import datetime
+from locallib import directorysearch
 
 # scoredict = {}
 load_dotenv()
@@ -80,6 +81,45 @@ async def clear(ctx,number = 0):
     
     print('done clearing ' + str(ctx.author) + ' in channel (' + str(ctx.channel) + ', ' + str(ctx.guild) + ') times ' + str(number))
     await ctx.send(r':white_check_mark: deleted ' + str(len(deleted)) + ' messages')
+
+@client.command(name='isstudent')
+async def isstudent(ctx,rcs):
+
+    # print()
+    studenthood = await directorysearch.check_is_student(rcs)
+    print(studenthood,rcs)
+    if studenthood[0]:
+        s1 = 'Student'
+    else:
+        s1 = studenthood[1].replace('&amp;','&')
+    message = await ctx.send(rcs + '\'s role is ' + s1 + '.')
+    await asyncio.sleep(10)
+    await message.delete()
+    await ctx.message.delete()
+
+@client.command(name='botclear')
+async def botclear(ctx,number):
+    if ctx.message.author.guild_permissions.administrator:
+        ms1 = await ctx.send('Clearing ' + str(number) + ' of my own messages...')
+        print('clearing ' + str(ms1.author) + ' in channel (' + str(ctx.channel) + ', ' + str(ctx.guild) + ') times ' + str(number))
+        def is_requester(msg):
+            if msg.author == ms1.author:
+                return True
+            else:
+                return False
+        
+        async with ctx.typing():
+            deleted = await ctx.channel.purge(limit=(number+1),check=is_requester,bulk=True)
+        
+        print('done clearing ' + str(ms1.author) + ' in channel (' + str(ctx.channel) + ', ' + str(ctx.guild) + ') times ' + str(number))
+        await ctx.send(r':white_check_mark: deleted ' + str(len(deleted)) + ' messages')
+    else:
+        pass    
+
+@client.command(name='echo')
+async def echo(ctx):
+    await ctx.send(str(ctx.message.content)[6:])
+    await ctx.message.delete()
 
 client.loop.create_task(update_stats())
 client.run(TOKEN)
