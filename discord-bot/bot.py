@@ -63,7 +63,7 @@ async def update_stats():
                 json.dump(scoredict,f)
         except Exception as e:
             print(e)
-        await asyncio.sleep(120)
+        await asyncio.sleep(1800)
 
 @client.command(name='clear')
 async def clear(ctx,number = 0):
