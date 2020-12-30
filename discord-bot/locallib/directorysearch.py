@@ -15,7 +15,7 @@ async def check_is_student(rcs):
                 # print(repr(str(a)))
                 try:
                     # print('\n')
-                    s1 = re.search('>[\s,\S]{1,}<',str(a),re.M).group(0).strip('<').strip('>').strip()
+                    s1 = re.search(r'>[\s,\S]{1,}<',str(a),re.M).group(0).strip('<').strip('>').strip()
                     # print(repr(s1))
                     l.append(s1)
                 except Exception as e:
