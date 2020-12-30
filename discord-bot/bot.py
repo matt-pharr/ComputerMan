@@ -52,7 +52,7 @@ async def on_message(message):
 
 async def update_stats():
     await client.wait_until_ready()
-    await asyncio.sleep(120)
+    await asyncio.sleep(15)
     print('stats updater running')
     global scoredict
     while True:
