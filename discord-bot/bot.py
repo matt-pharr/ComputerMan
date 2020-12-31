@@ -86,7 +86,7 @@ async def clear(ctx,number = 0):
 async def isstudent(ctx,rcs):
 
     # print()
-    studenthood = await directorysearch.check_is_student(rcs)
+    studenthood = await directorysearch.check_is_student(rcs.split('@rpi.edu')[0])
     print(studenthood,rcs)
     if studenthood[0]:
         s1 = 'Student'

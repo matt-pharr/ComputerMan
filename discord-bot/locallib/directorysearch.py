@@ -32,6 +32,7 @@ async def check_is_student(rcs):
                     if re.match(rcs + '@rpi.edu',l[i]) is not None:
                         # print('found')
                         return (l[i+1] == '',l[i+1])
+                return (False,'Not Found')
 
 async def checkprint(rcs):
     val = await check_is_student(rcs)
