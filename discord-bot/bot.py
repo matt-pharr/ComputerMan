@@ -84,18 +84,18 @@ async def clear(ctx,number = 0):
 
 @client.command(name='isstudent')
 async def isstudent(ctx,rcs):
-
-    # print()
-    studenthood = await directorysearch.check_is_student(rcs.split('@rpi.edu')[0])
-    print(studenthood,rcs)
-    if studenthood[0]:
-        s1 = 'Student'
-    else:
-        s1 = studenthood[1].replace('&amp;','&')
-    message = await ctx.send(rcs + '\'s role is ' + s1 + '.')
-    await asyncio.sleep(10)
-    await message.delete()
-    await ctx.message.delete()
+    if ctx.message.author.guild_permissions.administrator:
+        # print()
+        studenthood = await directorysearch.check_is_student(rcs.split('@rpi.edu')[0])
+        print(studenthood,rcs)
+        if studenthood[0]:
+            s1 = 'Student'
+        else:
+            s1 = studenthood[1].replace('&amp;','&')
+        message = await ctx.send(rcs + '\'s role is ' + s1 + '.')
+        await asyncio.sleep(10)
+        await message.delete()
+        await ctx.message.delete()
 
 @client.command(name='botclear')
 async def botclear(ctx,number):
@@ -118,8 +118,9 @@ async def botclear(ctx,number):
 
 @client.command(name='echo')
 async def echo(ctx):
-    await ctx.send(str(ctx.message.content)[6:])
-    await ctx.message.delete()
+    if ctx.message.author.guild_permissions.administrator:
+        await ctx.send(str(ctx.message.content)[6:])
+        await ctx.message.delete()
 
 client.loop.create_task(update_stats())
 client.run(TOKEN)
