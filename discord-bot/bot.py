@@ -11,11 +11,12 @@ from locallib import directorysearch
 import re
 import smtplib
 from email.mime.text import MIMEText
+from email.utils import formatdate
 
 # scoredict = {}
 load_dotenv()
-GMAIL_USER = os.getenv('GMAIL_USER')
-GMAIL_PASSWD = os.getenv('GMAIL_PASSWD')
+EMAIL_USER = os.getenv('EMAIL_USER')
+EMAIL_PASSWD = os.getenv('EMAIL_PASSWD')
 TOKEN = os.getenv('DISCORD_TOKEN')
 client = commands.Bot(command_prefix = '!')
 currentguild = 'rpi'
@@ -109,7 +110,7 @@ async def verify(ctx):
         await channel.send(name + ' is not a student. Your role is ' + role + '.')
         return
 
-    await channel.send("Sending verification email to " + email + '.\nPlease type in the recieved six-digit verification code.')
+    await channel.send("Sending verification email to " + email + '. Make sure to check your spam folder at https://respite.rpi.edu/canit/index.php if it does not show up in your inbox immediately.\n\nPlease type in the recieved six-digit verification code.')
     
 
     code = str(random.randint(0,999999)).zfill(6)
@@ -127,9 +128,9 @@ async def verify(ctx):
         msg['From'] = 'Computer Man <' + sender + '>'
         msg['To'] = dsearch[2] + ' <' + destination + '>'
 
-        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server = smtplib.SMTP_SSL('smtp.mailgun.org', 465)
         server.set_debuglevel(False)
-        server.login(GMAIL_USER,GMAIL_PASSWD)
+        server.login(EMAIL_USER,EMAIL_PASSWD)
 
         try:
             server.sendmail(sender,destination,msg.as_string())
