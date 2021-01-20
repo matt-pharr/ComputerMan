@@ -1,15 +1,21 @@
 import discord
 from discord.ext import commands
 import os
+import sys
 from dotenv import load_dotenv
 import asyncio
 import json
 import random
 import datetime
 from locallib import directorysearch
+import re
+import smtplib
+from email.mime.text import MIMEText
 
 # scoredict = {}
 load_dotenv()
+GMAIL_USER = os.getenv('GMAIL_USER')
+GMAIL_PASSWD = os.getenv('GMAIL_PASSWD')
 TOKEN = os.getenv('DISCORD_TOKEN')
 client = commands.Bot(command_prefix = '!')
 currentguild = 'rpi'
@@ -27,8 +33,8 @@ async def on_ready():
             scoredict = json.load(f)
     except Exception as e:
         print(e)
-    print("Scores:")
-    print(scoredict)
+    # print("Scores:")
+    # print(scoredict)
              
 
 @client.event
@@ -65,6 +71,77 @@ async def update_stats():
             print(e)
         await asyncio.sleep(1800)
 
+@client.command(name='source')
+async def source(ctx):
+    await ctx.message.channel.send('https://github.com/matt-pharr/ComputerMan')
+
+@client.command(name='verify')
+async def verify(ctx):
+    verified = discord.utils.find(lambda r: r.name == 'Verified', ctx.message.guild.roles)
+    if verified in ctx.message.author.roles and False:
+        await ctx.message.channel.send("You are already verified. If this is a mistake please contact staff.")
+        return
+    channel = await ctx.message.author.create_dm()
+    await channel.send('Type your RCS id (ex: \'persap\') or RPI email to verify your identity. You will recieve an email to your RPI inbox with a six-digit verificaion code.')
+    print('verifying ' + str(ctx.message.author))
+    rcs_msg = await client.wait_for('message', check = lambda message: (message.channel == channel and message.author == ctx.message.author))
+    rcs_msg = str(rcs_msg.content).strip()
+    print(rcs_msg)
+
+    if rcs_msg[-8:] == '@rpi.edu':
+        email = rcs_msg
+        rcs = rcs_msg[:-8]
+    elif '@' in rcs_msg:
+        await channel.send(rcs_msg + ' is an invalid e-mail address. Please type !verify to try again.')
+        return
+    elif re.match('^[a-z]{2,6}[0-9]*$',rcs_msg) is not None:
+        email = rcs_msg + '@rpi.edu'
+        rcs = rcs_msg
+    else:
+        await channel.send('Not a valid RCS ID or rpi email. Please type !verify to try again.')
+        return
+
+    dsearch = await directorysearch.check_is_student(rcs)
+
+    if not dsearch[0]:
+        role = dsearch[1].replace('&amp;','&')
+        name = dsearch[2]
+        await channel.send(name + ' is not a student. Your role is ' + role + '.')
+        return
+
+    await channel.send("Sending verification email to " + email + '.\nPlease type in the recieved six-digit verification code.')
+    
+
+    code = str(random.randint(0,999999)).zfill(6)
+    print('code:', code)
+    text_subtype = 'plain'
+    content = "Your six-digit verification code code is %s. Return to the app to complete the verification process.\n\nIf you did not request verification on the RPI Student Discord server, you may safely disregard this message.\n\nThanks,\n\nThe RPI Student Server Moderation Team." % code
+    
+    sender = GMAIL_USER
+    destination = email
+    subject = 'RPI Student Discord Verification'
+
+    try:
+        msg = MIMEText(content,text_subtype)
+        msg['Subject'] = subject
+        msg['From'] = 'Computer Man <' + sender + '>'
+        msg['To'] = dsearch[2] + ' <' + destination + '>'
+
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.set_debuglevel(False)
+        server.login(GMAIL_USER,GMAIL_PASSWD)
+
+        try:
+            server.sendmail(sender,destination,msg.as_string())
+        
+        finally:
+            server.close()
+        
+        print('Email sent.')
+
+    except Exception as e1:
+        print(e1)
+
 @client.command(name='clear')
 async def clear(ctx,number = 0):
     if str(ctx.channel) != 'bots':
@@ -93,6 +170,11 @@ async def isstudent(ctx,rcs):
         else:
             s1 = studenthood[1].replace('&amp;','&')
         message = await ctx.send(rcs + '\'s role is ' + s1 + '.')
+        await asyncio.sleep(10)
+        await message.delete()
+        await ctx.message.delete()
+    else:
+        message = await ctx.send('Permission denied.')
         await asyncio.sleep(10)
         await message.delete()
         await ctx.message.delete()
