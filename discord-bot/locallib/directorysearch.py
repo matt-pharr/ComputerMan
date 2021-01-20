@@ -7,8 +7,10 @@ async def check_is_student(rcs):
     base = r'http://info.rpi.edu/directory-search/'
     async with aiohttp.ClientSession() as session:
         async with session.get(base + str(rcs)) as resp:
-            # print(resp.status)
+        #async with session.get('https://www.google.com') as resp:
+            print(resp.status)
             content = await resp.text()
+            #print(content)
             soup = BeautifulSoup(content,'html.parser')
             l = []
             for a in soup.find_all('td'):
@@ -30,8 +32,8 @@ async def check_is_student(rcs):
             else:
                 for i in range(len(l)):
                     if re.match(rcs + '@rpi.edu',l[i]) is not None:
-                        # print('found')
-                        return (l[i+1] == '',l[i+1])
+                        #print(l)
+                        return (l[i+1] == '',l[i+1],re.search(r'>[\s,\S]{1,}<',l[0],re.M).group(0).strip('<').strip('>').strip())
                 return (False,'Not Found')
 
 async def checkprint(rcs):
@@ -39,7 +41,8 @@ async def checkprint(rcs):
     print(val)
 
 if __name__ == "__main__":
-    testcheckrcs = 'meuniv'
+    print('running...')
+    testcheckrcs = 'persap'
     loop = asyncio.get_event_loop()
     loop.run_until_complete(checkprint(testcheckrcs))
 
