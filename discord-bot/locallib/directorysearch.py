@@ -28,7 +28,7 @@ async def check_is_student(rcs):
             # for li in l:
             #     print(repr(li))
             if len(l) < 3:
-                return False
+                return (False, 'Not Found')
             else:
                 for i in range(len(l)):
                     if re.match(rcs + '@rpi.edu',l[i]) is not None:
