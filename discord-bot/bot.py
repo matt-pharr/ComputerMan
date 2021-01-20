@@ -116,9 +116,9 @@ async def verify(ctx):
     code = str(random.randint(0,999999)).zfill(6)
     print('code:', code)
     text_subtype = 'plain'
-    content = "Your six-digit verification code code is %s. Return to the app to complete the verification process.\n\nIf you did not request verification on the RPI Student Discord server, you may safely disregard this message.\n\nThanks,\n\nThe RPI Student Server Moderation Team." % code
+    content = "Dear community member,\n\nYour verification code is %s. If you did not request a code, please disregard this email.\n\nSincerely,\n\nCommunity Coordinator Team." % code
     
-    sender = GMAIL_USER
+    sender = EMAIL_USER
     destination = email
     subject = 'RPI Student Discord Verification'
 
@@ -127,6 +127,7 @@ async def verify(ctx):
         msg['Subject'] = subject
         msg['From'] = 'Computer Man <' + sender + '>'
         msg['To'] = dsearch[2] + ' <' + destination + '>'
+        msg['Date'] = formatdate(usegmt=True)
 
         server = smtplib.SMTP_SSL('smtp.mailgun.org', 465)
         server.set_debuglevel(False)
