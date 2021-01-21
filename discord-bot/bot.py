@@ -32,8 +32,8 @@ GUILD_ID = int(os.getenv('GUILD_ID'))
 VERIF_CHANNEL = int(os.getenv('VERIF_CHANNEL'))
 client = commands.Bot(command_prefix = prefix, intents=intents)
 currentguild = 'rpi'
-
-
+dir = os.getcwd()
+print(dir)
 
 @client.event
 async def on_ready():
