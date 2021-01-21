@@ -28,13 +28,13 @@ async def check_is_student(rcs):
             # for li in l:
             #     print(repr(li))
             if len(l) < 3:
-                return (False, 'Not Found')
+                return (False, 'Not Found',None)
             else:
                 for i in range(len(l)):
                     if re.match(rcs + '@rpi.edu',l[i]) is not None:
                         #print(l)
                         return (l[i+1] == '',l[i+1],re.search(r'>[\s,\S]{1,}<',l[0],re.M).group(0).strip('<').strip('>').strip())
-                return (False,'Not Found')
+                return (False,'Not Found',None)
 
 async def checkprint(rcs):
     val = await check_is_student(rcs)

@@ -15,11 +15,22 @@ from email.utils import formatdate
 
 # scoredict = {}
 load_dotenv()
+intents = discord.Intents.default()
+intents.typing = False
+intents.presences = False
+intents.guilds = True
+intents.members = True
+# intents.channels = True
+
+prefix = '!'
 EMAIL_USER = os.getenv('EMAIL_USER')
 EMAIL_PASSWD = os.getenv('EMAIL_PASSWD')
 TOKEN = os.getenv('DISCORD_TOKEN')
-client = commands.Bot(command_prefix = '!')
+GUILD_ID = int(os.getenv('GUILD_ID'))
+VERIF_CHANNEL = int(os.getenv('VERIF_CHANNEL'))
+client = commands.Bot(command_prefix = prefix, intents=intents)
 currentguild = 'rpi'
+
 
 
 @client.event
@@ -49,12 +60,10 @@ async def on_message(message):
             scoredict[str(int(message.author.id))] += 1
         else:
             scoredict[str(int(message.author.id))] = 1
-    # print(message.author.id)
-    # user = client.get_user(message.author.id)
-    # print(client.is_closed)
-    # print(message.guild)
-    # print(str(user))
-    # print(scoredict)
+    
+    if 'sis' in str(message.content).lower():
+        await message.channel.send('<:sisman:538985904778379294>')
+
     await client.process_commands(message)
 
 async def update_stats():
@@ -72,22 +81,70 @@ async def update_stats():
             print(e)
         await asyncio.sleep(1800)
 
+
+@client.command(name='code')
+async def code(ctx):
+    """
+    Sends a github link with my source code.
+    """
+    await ctx.message.channel.send('https://github.com/matt-pharr/ComputerMan')
+
 @client.command(name='source')
 async def source(ctx):
+    """
+    An alias for command 'code.'
+    """
     await ctx.message.channel.send('https://github.com/matt-pharr/ComputerMan')
+
+@client.command(name='unverify')
+async def unverify(ctx):
+    """
+    Unverifies the user.
+    """
+    guild = client.get_guild(GUILD_ID)
+    verified = discord.utils.find(lambda r: r.name == 'Verified', guild.roles)
+    studentrole = discord.utils.find(lambda r: r.name == 'Students', guild.roles)
+    alumnirole = discord.utils.find(lambda r: r.name == 'Alumni', guild.roles)
+    user = discord.utils.find(lambda m: m.id == ctx.message.author.id, guild.members)
+
+    await user.remove_roles(verified,studentrole,alumnirole)
+
 
 @client.command(name='verify')
 async def verify(ctx):
-    verified = discord.utils.find(lambda r: r.name == 'Verified', ctx.message.guild.roles)
-    if verified in ctx.message.author.roles and False:
-        await ctx.message.channel.send("You are already verified. If this is a mistake please contact staff.")
+    """
+    Completes the verification process for unverified users. Checks the directory to ensure user is a student, then sends an email with a verification code to user's rpi email address. Your name or discord handle are never shared with the public or RPI.
+    """
+
+    ## Checks that the user is not already verified in the operating server:
+
+    guild = client.get_guild(GUILD_ID)
+    verified = discord.utils.find(lambda r: r.name == 'Verified', guild.roles)
+    user = discord.utils.find(lambda m: m.id == ctx.message.author.id, guild.members)
+
+    if verified in user.roles and not user.guild_permissions.administrator:# and False:
+        await ctx.message.channel.send("You are already verified. If this is a mistake, please contact staff.")
         return
+    
+    ## Sends an instructional DM to the user:
+
     channel = await ctx.message.author.create_dm()
-    await channel.send('Type your RCS id (ex: \'persap\') or RPI email to verify your identity. You will recieve an email to your RPI inbox with a six-digit verificaion code.')
+    mymessage = await channel.send('Type your RCS id (ex: \'persap\') or RPI email to verify your identity. You will recieve an email to your RPI inbox with a six-digit verificaion code.')
+    
+    if channel != ctx.message.channel:
+        await ctx.message.channel.send("DM Sent.")
+    
     print('verifying ' + str(ctx.message.author))
-    rcs_msg = await client.wait_for('message', check = lambda message: (message.channel == channel and message.author == ctx.message.author))
+
+    ## Waits for user to send their rcs id or email. Checks that the next message is not from the bot:
+
+    rcs_msg = await client.wait_for('message', check = lambda message: (message.channel == channel))
+    if rcs_msg.author == mymessage.author:
+        return
     rcs_msg = str(rcs_msg.content).strip()
     print(rcs_msg)
+
+    ## Processes the message and determines whether it is a valid ID/email: 
 
     if rcs_msg[-8:] == '@rpi.edu':
         email = rcs_msg
@@ -95,12 +152,16 @@ async def verify(ctx):
     elif '@' in rcs_msg:
         await channel.send(rcs_msg + ' is an invalid e-mail address. Please type !verify to try again.')
         return
-    elif re.match('^[a-z]{2,6}[0-9]*$',rcs_msg) is not None:
+    elif re.match('^[a-z]{2,7}[0-9]*$',rcs_msg) is not None:
         email = rcs_msg + '@rpi.edu'
         rcs = rcs_msg
+    elif rcs_msg[0] == prefix:
+        return
     else:
         await channel.send('Not a valid RCS ID or rpi email. Please type !verify to try again.')
         return
+
+    ## Searches the directory and checks whether the given RCS id is a student:
 
     dsearch = await directorysearch.check_is_student(rcs)
 
@@ -112,6 +173,7 @@ async def verify(ctx):
 
     await channel.send("Sending verification email to " + email + '. Make sure to check your spam folder at https://respite.rpi.edu/canit/index.php if it does not show up in your inbox immediately.\n\nPlease type in the recieved six-digit verification code.')
     
+    ## Generates a code and email content:
 
     code = str(random.randint(0,999999)).zfill(6)
     print('code:', code)
@@ -122,10 +184,12 @@ async def verify(ctx):
     destination = email
     subject = 'RPI Student Discord Verification'
 
+    ## MIME formats and sends the email using the given email username and password:
+
     try:
         msg = MIMEText(content,text_subtype)
         msg['Subject'] = subject
-        msg['From'] = 'Computer Man <' + sender + '>'
+        msg['From'] = 'Community Discord Verification <' + sender + '>'
         msg['To'] = dsearch[2] + ' <' + destination + '>'
         msg['Date'] = formatdate(usegmt=True)
 
@@ -143,6 +207,34 @@ async def verify(ctx):
 
     except Exception as e1:
         print(e1)
+
+    print('waiting...')
+
+    ## Waits for verification code and checks that the code is correct:
+    code_msg = await client.wait_for('message', check = lambda message: (message.channel == channel))
+    print("code recieved")
+    if code_msg.author == mymessage.author:
+        print("bot message, break")
+        return
+    code_msg = str(code_msg.content).strip()
+    if code_msg != code:
+        print("invalid code")
+        await channel.send("Incorrect code. Type " + prefix + "verify to try again.")
+        return
+    ## Verifies the user:
+    else:
+        
+        studentrole = discord.utils.find(lambda r: r.name == 'Students', guild.roles)
+        await user.add_roles(verified,studentrole)      
+        
+        await channel.send("Thank you for verifying your student status. Your identity will never be shared with RPI or the public. You now have access to verified student/alumni-only channels.")
+
+        newchannel = client.get_channel(VERIF_CHANNEL)
+        await newchannel.send(str(rcs) + " = <@" + str(user.id) + "> (" + str(user.id) + ")")
+    
+    return
+
+
 
 @client.command(name='clear')
 async def clear(ctx,number = 0):
@@ -198,7 +290,7 @@ async def botclear(ctx,number):
         print('done clearing ' + str(ms1.author) + ' in channel (' + str(ctx.channel) + ', ' + str(ctx.guild) + ') times ' + str(number))
         await ctx.send(r':white_check_mark: deleted ' + str(len(deleted)) + ' messages')
     else:
-        pass    
+        ctx.send("Permission Denied.")
 
 @client.command(name='echo')
 async def echo(ctx):
