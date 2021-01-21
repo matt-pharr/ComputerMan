@@ -12,6 +12,9 @@ import re
 import smtplib
 from email.mime.text import MIMEText
 from email.utils import formatdate
+print(os.getcwd())
+os.chdir(str(__file__)[:-6] + os.pathsep + '..')
+print(os.getcwd())
 
 # scoredict = {}
 load_dotenv()
@@ -32,9 +35,7 @@ GUILD_ID = int(os.getenv('GUILD_ID'))
 VERIF_CHANNEL = int(os.getenv('VERIF_CHANNEL'))
 client = commands.Bot(command_prefix = prefix, intents=intents)
 currentguild = 'rpi'
-dir = os.getcwd()
-print(dir)
-print(__file__)
+
 
 @client.event
 async def on_ready():
