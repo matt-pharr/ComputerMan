@@ -34,6 +34,7 @@ client = commands.Bot(command_prefix = prefix, intents=intents)
 currentguild = 'rpi'
 dir = os.getcwd()
 print(dir)
+print(__file__)
 
 @client.event
 async def on_ready():
