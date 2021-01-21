@@ -142,7 +142,7 @@ async def verify(ctx):
     if rcs_msg.author == mymessage.author:
         return
     rcs_msg = str(rcs_msg.content).strip()
-    print(rcs_msg)
+    print('rcs id = ' + rcs_msg)
 
     ## Processes the message and determines whether it is a valid ID/email: 
 
@@ -150,14 +150,17 @@ async def verify(ctx):
         email = rcs_msg
         rcs = rcs_msg[:-8]
     elif '@' in rcs_msg:
+        print('invalid email address ' + str(user))
         await channel.send(rcs_msg + ' is an invalid e-mail address. Please type !verify to try again.')
         return
     elif re.match('^[a-z]{2,7}[0-9]*$',rcs_msg) is not None:
         email = rcs_msg + '@rpi.edu'
         rcs = rcs_msg
     elif rcs_msg[0] == prefix:
+        print(str(user) + ' quit verification')
         return
     else:
+        print(str(user) + ' inputted invalid id')
         await channel.send('Not a valid RCS ID or rpi email. Please type !verify to try again.')
         return
 
@@ -168,6 +171,7 @@ async def verify(ctx):
     if not dsearch[0]:
         role = dsearch[1].replace('&amp;','&')
         name = dsearch[2]
+        print(str(user) + ' inputted non-student id')
         await channel.send(name + ' is not a student. Your role is ' + role + '.')
         return
 
@@ -207,6 +211,8 @@ async def verify(ctx):
 
     except Exception as e1:
         print(e1)
+        print('email not sent to ' + str(user))
+        return
 
     print('waiting...')
 
@@ -214,7 +220,7 @@ async def verify(ctx):
     code_msg = await client.wait_for('message', check = lambda message: (message.channel == channel))
     print("code recieved")
     if code_msg.author == mymessage.author:
-        print("bot message, break")
+        print(str(user) + " quit verification")
         return
     code_msg = str(code_msg.content).strip()
     if code_msg != code:
@@ -231,6 +237,7 @@ async def verify(ctx):
 
         newchannel = client.get_channel(VERIF_CHANNEL)
         await newchannel.send(str(rcs) + " = <@" + str(user.id) + "> (" + str(user.id) + ")")
+        print(f'user {str(user)} verified as {rcs} ({dsearch[2]})')
     
     return
 
