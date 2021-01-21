@@ -22,6 +22,8 @@ intents.guilds = True
 intents.members = True
 # intents.channels = True
 
+
+
 prefix = '!'
 EMAIL_USER = os.getenv('EMAIL_USER')
 EMAIL_PASSWD = os.getenv('EMAIL_PASSWD')
@@ -242,6 +244,19 @@ async def verify(ctx):
     return
 
 
+@client.command(name='update')
+async def update(ctx):
+    if ctx.message.author.guild_permissions.administrator == True:
+        await ctx.send('Pulling from source...')
+        os.system('git pull')
+        return
+
+@client.command(name='restart')
+async def restart(ctx):
+    if ctx.message.author.guild_permissions.administrator == True:
+        await ctx.send('Restarting...')
+        os.system('sudo reboot')
+        return
 
 @client.command(name='clear')
 async def clear(ctx,number = 0):
