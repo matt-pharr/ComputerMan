@@ -12,8 +12,9 @@ import re
 import smtplib
 from email.mime.text import MIMEText
 from email.utils import formatdate
+
 print(os.getcwd())
-os.chdir(str(__file__)[:-6] + os.pathsep + '..')
+os.chdir(str(__file__)[:-6] + '..')
 print(os.getcwd())
 
 # scoredict = {}
