@@ -74,6 +74,7 @@ async def on_message(message):
 
     if message.channel.id == BOOT_CHANNEL:
         if message.content == 'Booted.':
+            await message.channel.send('Shutting down.')
             await client.logout()
 
     await client.process_commands(message)
