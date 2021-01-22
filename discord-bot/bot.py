@@ -41,6 +41,9 @@ currentguild = 'rpi'
 
 @client.event
 async def on_ready():
+    ready = False
+    bootchannel = client.get_channel(BOOT_CHANNEL)
+    await bootchannel.send('Booted.')
     global scoredict
     print("Bot is ready.")
     print("Logged in as", client.user.display_name)
@@ -51,8 +54,6 @@ async def on_ready():
             scoredict = json.load(f)
     except Exception as e:
         print(e)
-    bootchannel = client.get_channel(BOOT_CHANNEL)
-    await bootchannel.send('Booted.')
     # print("Scores:")
     # print(scoredict)
              
@@ -60,6 +61,7 @@ async def on_ready():
 @client.event
 async def on_message(message):
     global scoredict
+    global ready
     # Triggers whenever a message is sent in a channel the bot has access to view, in all guilds.
     if currentguild == str(message.guild):
         if message.author.bot:
@@ -73,9 +75,10 @@ async def on_message(message):
         await message.channel.send('<:sisman:538985904778379294>')
 
     if message.channel.id == BOOT_CHANNEL:
-        if message.content == 'Booted.':
+        if message.content == 'Booted.' and ready:
             await message.channel.send('Shutting down.')
             await client.logout()
+        ready = True
 
     await client.process_commands(message)
 
