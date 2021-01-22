@@ -34,6 +34,7 @@ EMAIL_PASSWD = os.getenv('EMAIL_PASSWD')
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD_ID = int(os.getenv('GUILD_ID'))
 VERIF_CHANNEL = int(os.getenv('VERIF_CHANNEL'))
+BOOT_CHANNEL = int(os.getenv('BOOT_CHANNEL'))
 client = commands.Bot(command_prefix = prefix, intents=intents)
 currentguild = 'rpi'
 
@@ -50,6 +51,8 @@ async def on_ready():
             scoredict = json.load(f)
     except Exception as e:
         print(e)
+    bootchannel = client.get_channel(BOOT_CHANNEL)
+    await bootchannel.send('Booted.')
     # print("Scores:")
     # print(scoredict)
              
@@ -68,6 +71,10 @@ async def on_message(message):
     
     if 'sis' in str(message.content).lower() and message.author != client.user:
         await message.channel.send('<:sisman:538985904778379294>')
+
+    if message.channel.id == BOOT_CHANNEL:
+        if message.content == 'Booted.':
+            await client.logout()
 
     await client.process_commands(message)
 
