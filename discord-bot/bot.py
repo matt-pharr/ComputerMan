@@ -66,7 +66,7 @@ async def on_message(message):
         else:
             scoredict[str(int(message.author.id))] = 1
     
-    if 'sis' in str(message.content).lower():
+    if 'sis' in str(message.content).lower() and message.author != client.user:
         await message.channel.send('<:sisman:538985904778379294>')
 
     await client.process_commands(message)
