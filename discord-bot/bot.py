@@ -267,7 +267,7 @@ async def update(ctx):
 async def restart(ctx):
     if ctx.message.author.guild_permissions.administrator == True:
         await ctx.send('Restarting...')
-        os.system('sudo reboot')
+        os.system('sudo systemctl restart computerman.service')
         return
 
 @client.command(name='clear')
