@@ -71,12 +71,12 @@ async def on_message(message):
     if 'sis' in str(message.content).lower() and message.author != client.user:
         await message.channel.send('<:sisman:538985904778379294>')
 
-    if message.channel.id == BOOT_CHANNEL:
-        if message.content == f'Booted. {id}':
-            return
-        elif message.content[:7] == 'Booted.':
-            await message.channel.send('Shutting down.')
-            await client.logout()
+    # if message.channel.id == BOOT_CHANNEL:
+    #     if message.content == f'Booted. {id}':
+    #         return
+    #     elif message.content[:7] == 'Booted.':
+    #         await message.channel.send('Shutting down.')
+    #         await client.logout()
 
     await client.process_commands(message)
 
