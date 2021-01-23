@@ -26,8 +26,6 @@ intents.guilds = True
 intents.members = True
 # intents.channels = True
 
-
-
 prefix = '!'
 EMAIL_USER = os.getenv('EMAIL_USER')
 EMAIL_PASSWD = os.getenv('EMAIL_PASSWD')
@@ -37,11 +35,10 @@ VERIF_CHANNEL = int(os.getenv('VERIF_CHANNEL'))
 BOOT_CHANNEL = int(os.getenv('BOOT_CHANNEL'))
 client = commands.Bot(command_prefix = prefix, intents=intents)
 currentguild = 'rpi'
-
+id = str(random.randint(0,999999999)).zfill(9)
 
 @client.event
 async def on_ready():
-    ready = False
     bootchannel = client.get_channel(BOOT_CHANNEL)
     await bootchannel.send('Booted.')
     global scoredict
@@ -61,7 +58,7 @@ async def on_ready():
 @client.event
 async def on_message(message):
     global scoredict
-    global ready
+    global id
     # Triggers whenever a message is sent in a channel the bot has access to view, in all guilds.
     if currentguild == str(message.guild):
         if message.author.bot:
@@ -75,10 +72,11 @@ async def on_message(message):
         await message.channel.send('<:sisman:538985904778379294>')
 
     if message.channel.id == BOOT_CHANNEL:
-        if message.content == 'Booted.' and ready:
+        if message.content == f'Booted. {id}':
+            return
+        elif message.content[:7] == 'Booted.':
             await message.channel.send('Shutting down.')
             await client.logout()
-        ready = True
 
     await client.process_commands(message)
 
