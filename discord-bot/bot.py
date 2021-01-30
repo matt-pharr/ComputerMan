@@ -61,7 +61,7 @@ async def on_message(message):
     global scoredict
     global id
     # Triggers whenever a message is sent in a channel the bot has access to view, in all guilds.
-    print(str(message.author) + ':',message.content)
+    print(str(message.channel) + ': ' + str(message.author) + ':',message.content)
     if currentguild == str(message.guild):
         if message.author.bot:
             return
