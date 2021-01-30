@@ -69,7 +69,7 @@ async def on_message(message):
         else:
             scoredict[str(int(message.author.id))] = 1
     
-    if re.search(r':\w*sis\w*:|(^|\b)sis(\b|$)|\bsisman\b',str(message.content).lower()) is not None and message.author != client.user:
+    if re.search(r':\w*sis\w*:|(^|\b)sis(\b|$)|(^|\b)sisman(\b|$)',str(message.content).lower()) is not None and message.author != client.user:
         await message.channel.send('<:sisman:538985904778379294>')
 
     # if message.channel.id == BOOT_CHANNEL:
