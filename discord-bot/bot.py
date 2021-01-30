@@ -47,7 +47,7 @@ async def on_ready():
     print("Logged in as", client.user.display_name)
     try:
         x = datetime.datetime
-        os.system('cp data/scores.json data/scores.json.' + str(x.now()).replace(' ','-') + '.bak')
+        os.system('sudo cp data/scores.json data/scores.json.' + str(x.now()).replace(' ','-') + '.bak')
         with open("data/scores.json", 'r') as f:
             scoredict = json.load(f)
     except Exception as e:
