@@ -191,7 +191,7 @@ async def verify(ctx):
         await channel.send(name + ' is not a student. Your role is ' + role + '.')
         return
 
-    await channel.send("Sending verification email to " + email + '. **Make sure to check your spam folder** at https://respite.rpi.edu/canit/index.php if it does not show up in your inbox immediately.\n\nPlease type in the recieved six-digit verification code.')
+    await channel.send("Sending verification email to " + email + r'. **Make sure to check your spam folder** at https://respite.rpi.edu/canit/index.php if it does not show up in your inbox immediately.\n\nPlease type in the recieved six-digit verification code.')
     
     ## Generates a code and email content:
 
