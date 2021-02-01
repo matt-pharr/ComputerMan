@@ -353,6 +353,17 @@ async def botclear(ctx,number):
     else:
         ctx.send("Permission Denied.")
 
+class NewHelp(commands.MinimalHelpCommand):
+    async def send_pages(self):
+        destination = self.get_destination()
+        e = discord.Embed(color=discord.Color.blurple(), description='')
+        for page in self.paginator.pages:
+            e.description += page
+        await destination.send(embed=e)
+
+client.help_command = MyHelpCommand()
+
+
 @client.command(name='echo')
 async def echo(ctx):
     """
