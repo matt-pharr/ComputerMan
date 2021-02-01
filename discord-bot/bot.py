@@ -115,7 +115,7 @@ async def source(ctx):
 @client.command(name='unverify')
 async def unverify(ctx):
     """
-    Unverifies the user.
+    Unverifies the user. To access verified channels again, type !verify.
     """
     guild = client.get_guild(GUILD_ID)
     verified = discord.utils.find(lambda r: r.name == 'Verified', guild.roles)
@@ -260,6 +260,9 @@ async def verify(ctx):
 
 @client.command(name='update')
 async def update(ctx):
+    """
+    Pulls from source.
+    """
     if ctx.message.author.guild_permissions.administrator == True:
         await ctx.send('Pulling from source...')
         os.system('git pull')
@@ -267,6 +270,9 @@ async def update(ctx):
 
 @client.command(name='restart')
 async def restart(ctx):
+    """
+    Restarts the bot.
+    """
     if ctx.message.author.guild_permissions.administrator == True:
         await ctx.send('Restarting...')
         os.system('sudo systemctl restart computerman.service')
@@ -284,6 +290,9 @@ async def restart(ctx):
 
 @client.command(name='clear')
 async def clear(ctx,number = 0):
+    """
+    !clear N checks the N past messages in the channel. If they are the users, they are deleted. To clear all messages in the channel, type !clear N where N is a really large number.
+    """
     if str(ctx.channel) != 'bots':
         pass#return -1
     print('clearing ' + str(ctx.author) + ' in channel (' + str(ctx.channel) + ', ' + str(ctx.guild) + ') times ' + str(number))
@@ -301,6 +310,9 @@ async def clear(ctx,number = 0):
 
 @client.command(name='isstudent')
 async def isstudent(ctx,rcs):
+    """
+    Checks an RCS id or email for studenthood using the directory.
+    """
     if ctx.message.author.guild_permissions.administrator:
         # print()
         studenthood = await directorysearch.check_is_student(rcs.split('@rpi.edu')[0])
@@ -321,6 +333,9 @@ async def isstudent(ctx,rcs):
 
 @client.command(name='botclear')
 async def botclear(ctx,number):
+    """
+    Clears bot messages. Only for administrative use. Currently broken, do not use.
+    """
     if ctx.message.author.guild_permissions.administrator:
         ms1 = await ctx.send('Clearing ' + str(number) + ' of my own messages...')
         print('clearing ' + str(ms1.author) + ' in channel (' + str(ctx.channel) + ', ' + str(ctx.guild) + ') times ' + str(number))
@@ -340,6 +355,9 @@ async def botclear(ctx,number):
 
 @client.command(name='echo')
 async def echo(ctx):
+    """
+    ECHO ECHo ECho Echo echo ...........
+    """
     if ctx.message.author.guild_permissions.administrator:
         await ctx.send(str(ctx.message.content)[6:])
         await ctx.message.delete()
