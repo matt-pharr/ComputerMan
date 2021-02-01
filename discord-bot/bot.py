@@ -391,6 +391,11 @@ async def echo(ctx):
         await ctx.send(str(ctx.message.content)[6:])
         await ctx.message.delete()
 
+
+
+
+
+client.add_cog(WelcomeBot(client))
 client.help_command = NewHelp()
 client.loop.create_task(update_stats())
 client.run(TOKEN)
