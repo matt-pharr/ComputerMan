@@ -96,7 +96,7 @@ class WelcomeBot(commands.Cog):
         if channel is not None:
             await channel.send(f"Hello {member.mention}! Welcome to the /r/RPI Discord server. You can go to #bots and send !verify to get verified if you're an RPI student, or go to #welcome if you're an alum.  If you're an incoming student, just say so and we will you the role.")
 
-    @commands.command()
+    @commands.command(name='welcome')
     async def welcome(self, ctx):
         """Welcomes the new user"""
         if time.time() - self.time() < 60:
