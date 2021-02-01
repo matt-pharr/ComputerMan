@@ -9,6 +9,7 @@ import random
 import datetime
 from locallib import directorysearch
 import re
+import time
 import smtplib
 from email.mime.text import MIMEText
 from email.utils import formatdate
@@ -81,6 +82,26 @@ async def on_message(message):
     #         await client.logout()
 
     await client.process_commands(message)
+
+class WelcomeBot(commands.Cog):
+    def __init__(self, bot):
+        self.client = client
+        self._last_member = None
+        self.messages = ["I am the one true welcome bot.",]
+        self.time = 0
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        channel = member.guild.system_channel
+        if channel is not None:
+            await channel.send(f"Hello {member.mention}! Welcome to the /r/RPI Discord server. You can go to #bots and send !verify to get verified if you're an RPI student, or go to #welcome if you're an alum.  If you're an incoming student, just say so and we will you the role.")
+
+    @commands.command()
+    async def welcome(self, ctx):
+        """Welcomes the new user"""
+        if time.time() - self.time() < 60:
+            await ctx.send('I am the superior welcome bot.')
+            self.time = time.time()
 
 async def update_stats():
     await client.wait_until_ready()
@@ -361,9 +382,6 @@ class NewHelp(commands.MinimalHelpCommand):
             e.description += page
         await destination.send(embed=e)
 
-client.help_command = NewHelp()
-
-
 @client.command(name='echo')
 async def echo(ctx):
     """
@@ -373,5 +391,6 @@ async def echo(ctx):
         await ctx.send(str(ctx.message.content)[6:])
         await ctx.message.delete()
 
+client.help_command = NewHelp()
 client.loop.create_task(update_stats())
 client.run(TOKEN)
