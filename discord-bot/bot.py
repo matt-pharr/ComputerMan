@@ -291,7 +291,7 @@ async def restart(ctx):
 @client.command(name='clear')
 async def clear(ctx,number = 0):
     """
-    !clear N checks the N past messages in the channel. If they are the users, they are deleted. To clear all messages in the channel, type !clear N where N is a really large number.
+    !clear N checks the N past messages in the channel. If they are the user's, they are deleted. To clear all messages in the channel, type !clear N where N is a really large number.
     """
     if str(ctx.channel) != 'bots':
         pass#return -1
