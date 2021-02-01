@@ -361,7 +361,7 @@ class NewHelp(commands.MinimalHelpCommand):
             e.description += page
         await destination.send(embed=e)
 
-client.help_command = MyHelpCommand()
+client.help_command = NewHelp()
 
 
 @client.command(name='echo')
