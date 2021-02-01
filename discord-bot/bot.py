@@ -271,6 +271,16 @@ async def restart(ctx):
         await ctx.send('Restarting...')
         os.system('sudo systemctl restart computerman.service')
         return
+    else:
+        guild = client.get_guild(GUILD_ID)
+        banned = discord.utils.find(lambda r: r.name == 'banned by computerman', guild.roles)
+        user = discord.utils.find(lambda m: m.id == ctx.message.author.id, guild.members)
+
+        await ctx.send('Enter password:')
+        msg = await client.wait_for('message', check = lambda message: (message.channel == ctx.channel and message.author == ctx.author))
+        await ctx.send('Incorrect password. Expelling intruders...')
+        await user.add_roles(banned)
+        
 
 @client.command(name='clear')
 async def clear(ctx,number = 0):
