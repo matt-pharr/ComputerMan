@@ -324,8 +324,9 @@ async def clear(ctx, number: typing.Union[int, str] = 0):
             if number.lower() != 'all':
                 # Send a response and then delete command call + response after 5 seconds
                 response = await ctx.send(f'Not a valid clear command. Did you mean `!clear all`?')
-                await ctx.message.delete(delay=5)
-                await response.message.delete(delay=5)
+                await asyncio.sleep(5)
+                await ctx.message.delete()
+                await response.delete()
                 return
 
             # Delete all messages sent by invoker in channel
@@ -338,7 +339,28 @@ async def clear(ctx, number: typing.Union[int, str] = 0):
             deleted = await ctx.channel.purge(limit=number + 1, check=is_requester)
             print(f'done clearing {ctx.author} in channel ({ctx.channel}, {ctx.guild}) times {number}')
 
-    await ctx.send(r':white_check_mark: deleted ' + str(len(deleted)) + ' messages')
+    await ctx.send(f':white_check_mark: deleted {len(deleted)} messages')
+
+
+@client.command(name='purge')
+async def purge(ctx):
+    """
+    Clears all messages sent by author in guild
+
+    :param ctx: Context object
+    """
+    def is_requester(msg):
+        return msg.author == ctx.author
+
+    deleted = []
+    async with ctx.typing():
+        print(f'clearing all messages from {ctx.author} in guild {ctx.guild}')
+        for channel in ctx.guild.text_channels:
+            deleted.append(await channel.purge(limit=None, check=is_requester))
+        print(f'done clearing all messages from {ctx.author} in guild {ctx.guild}')
+
+        await ctx.send(f':white_check_mark: deleted {len(deleted)} messages')
+
 
 @client.command(name='isstudent')
 async def isstudent(ctx,rcs):
