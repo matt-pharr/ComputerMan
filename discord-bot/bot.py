@@ -75,6 +75,10 @@ async def on_message(message):
     if re.search(r':\w*sis\w*:|(^|\b)sis(\b|$)|(^|\b)sisman(\b|$)',str(message.content).lower()) is not None and message.author != client.user:
         await message.channel.send('<:sisman:538985904778379294>')
 
+    if re.search(r':\w*sus\w*:|(^|\b)sus(\b|$)',str(message.content).lower()) is not None and message.author != client.user:
+        await message.channel.send('Sus? More like SIS...')
+        await message.channel.send('<:sisman:538985904778379294>')
+
     # if message.channel.id == BOOT_CHANNEL:
     #     if message.content == f'Booted. {id}':
     #         return
@@ -313,7 +317,7 @@ async def restart(ctx):
 @client.command(name='clear')
 async def clear(ctx, number: typing.Union[int, str] = 0):
     """
-    !clear N checks the N past messages in the channel. If they are the user's, they are deleted. To clear all messages in the channel, type !clear all
+    !clear N checks the N past messages in the channel. If they are the user's, they are deleted. To clear all messages in the channel, type !clear all.
     """
     def is_requester(msg):
         return msg.author == ctx.author
