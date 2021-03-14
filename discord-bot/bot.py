@@ -195,6 +195,8 @@ async def unverify(ctx):
     studentrole = discord.utils.find(lambda r: r.name == 'Students', guild.roles)
     alumnirole = discord.utils.find(lambda r: r.name == 'Alumni', guild.roles)
     user = discord.utils.find(lambda m: m.id == ctx.message.author.id, guild.members)
+    intense = client.get_channel(POLITICS_CHANNEL)
+    intense.set_permissions(user,overwrite=True)
 
     await user.remove_roles(verified,studentrole,alumnirole)
     ctx.send("I have removed your verified roles. Type !verify to add them again.")
