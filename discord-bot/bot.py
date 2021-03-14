@@ -38,6 +38,7 @@ GUILD_ID = int(os.getenv('GUILD_ID'))
 VERIF_CHANNEL = int(os.getenv('VERIF_CHANNEL'))
 BOOT_CHANNEL = int(os.getenv('BOOT_CHANNEL'))
 ALERT_CHANNEL = int(os.getenv('ALERT_CHANNEL'))
+POLITICS_CHANNEL = int(os.getenv('POLITICS_CHANNEL'))
 client = commands.Bot(command_prefix = prefix, intents=intents)
 currentguild = 'rpi'
 id = str(random.randint(0,999999999)).zfill(9)
@@ -330,6 +331,22 @@ async def verify(ctx):
     
     return
 
+@client.command(name='politics')
+async def politics(ctx):
+    intense = client.get_channel(POLITICS_CHANNEL)
+    guild = client.get_guild(GUILD_ID)
+    verified = discord.utils.find(lambda r: r.name == 'Verified', guild.roles)
+    user = discord.utils.find(lambda m: m.id == ctx.message.author.id, guild.members)
+    if not (verified in user.roles):
+        ctx.send("You must verify your identity to gain access to that channel. Use `!verify` and then try again.")
+    else:
+        if intense.permissions_for(user).read_messages:
+            await intense.set_permissions(user,read_messages=False,send_messages=False)
+            await ctx.send('Permissions added')
+        else:
+            await intense.set_permissions(user,read_messages=True,send_messages=True)
+            await ctx.send('Permissions removed')
+        
 
 @client.command(name='update')
 async def update(ctx):
