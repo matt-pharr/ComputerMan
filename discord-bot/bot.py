@@ -333,6 +333,9 @@ async def verify(ctx):
 
 @client.command(name='politics')
 async def politics(ctx):
+    """
+    Adds the user to the #intense-discussion channel. Remember that all rules in this server still apply in the intense discussion channel, and we will not hesitate to take your participation privileges away if you are causing a disruption.
+    """
     intense = client.get_channel(POLITICS_CHANNEL)
     guild = client.get_guild(GUILD_ID)
     verified = discord.utils.find(lambda r: r.name == 'Verified', guild.roles)
