@@ -342,10 +342,10 @@ async def politics(ctx):
     else:
         if intense.permissions_for(user).read_messages:
             await intense.set_permissions(user,read_messages=False,send_messages=False)
-            await ctx.send('Permissions added')
+            await ctx.send('Permissions removed')
         else:
             await intense.set_permissions(user,read_messages=True,send_messages=True)
-            await ctx.send('Permissions removed')
+            await ctx.send('Permissions added')
         
 
 @client.command(name='update')
