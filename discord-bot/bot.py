@@ -168,9 +168,6 @@ async def testalert(ctx):
     message1 = await alertchannel.send(embed=embed)
     await message1.publish()
     await ctx.send("Test complete.")
-
-
-
     
 
 @client.command(name='code')
@@ -484,5 +481,6 @@ async def echo(ctx):
 
 client.add_cog(WelcomeBot(client))
 client.help_command = NewHelp()
+client.loop.create_task(update_alerts())
 client.loop.create_task(update_stats())
 client.run(TOKEN)
