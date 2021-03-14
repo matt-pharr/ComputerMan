@@ -1,3 +1,4 @@
+from email.mime import text
 import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
@@ -36,6 +37,25 @@ async def check_is_student(rcs):
                         return (l[i+1] == '',l[i+1],re.search(r'>[\s,\S]{1,}<',l[0],re.M).group(0).strip('<').strip('>').strip())
                 return (False,'Not Found',None)
 
+# async def update_alerts():
+#     alerturl = r'https://alert.rpi.edu/alerts.js'
+#     lastalert = ""
+#     while True:
+#         await asyncio.sleep(10)
+#         async with aiohttp.ClientSession() as session:
+#             async with session.get(alerturl) as alerttxt:
+#                 content = await alerttxt.text()
+#                 # print(repr(content))
+#                 # print(content.splitlines()[0][:-1][16:].strip("\""))
+#                 alert = content.splitlines()[0][:-1][16:].strip("\"")
+#                 if alert == "":
+#                     continue
+#                 elif alert == lastalert:
+#                     continue
+#                 else:
+#                     # A new RPI alert has been posted.
+    
+
 async def checkprint(rcs):
     val = await check_is_student(rcs)
     print(val)
@@ -45,6 +65,8 @@ if __name__ == "__main__":
     testcheckrcs = 'persap'
     loop = asyncio.get_event_loop()
     loop.run_until_complete(checkprint(testcheckrcs))
+
+
 
 # page = Request(url,headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:33.0) Gecko/20120101 Firefox/33.0'})
 # print(urlopen(page).read())

@@ -14,6 +14,7 @@ import smtplib
 import typing
 from email.mime.text import MIMEText
 from email.utils import formatdate
+import aiohttp
 
 
 print(os.getcwd())
@@ -36,6 +37,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD_ID = int(os.getenv('GUILD_ID'))
 VERIF_CHANNEL = int(os.getenv('VERIF_CHANNEL'))
 BOOT_CHANNEL = int(os.getenv('BOOT_CHANNEL'))
+ALERT_CHANNEL = int(os.getenv('ALERT_CHANNEL'))
 client = commands.Bot(command_prefix = prefix, intents=intents)
 currentguild = 'rpi'
 id = str(random.randint(0,999999999)).zfill(9)
@@ -123,6 +125,53 @@ async def update_stats():
             print(e)
         await asyncio.sleep(1800)
 
+async def update_alerts():
+    await client.wait_until_ready
+    await asyncio.sleep(20)
+    print("alerts updater running")
+    alerturl = r'https://alert.rpi.edu/alerts.js'
+    lastalert = ""
+    while True:
+        await asyncio.sleep(10)
+        async with aiohttp.ClientSession() as session:
+            async with session.get(alerturl) as alerttxt:
+                content = await alerttxt.text()
+                alert = content.splitlines()[0][:-1][16:].strip("\"")
+                if alert == "":
+                    continue
+                elif alert == lastalert:
+                    continue
+                else:
+                    # A new RPI alert has been posted.
+                    lastalert = alert
+                    alertchannel = client.get_channel(ALERT_CHANNEL)
+                    embed=discord.Embed(color=0xd6001c)
+                    embed.add_field(name="A new RPI alert has been posted", value=alert, inline=True)
+                    embed.set_image(url=r"https://cdn.discordapp.com/attachments/792649866416881678/820760056395595776/Screenshot_from_2021-03-14_16-46-37.png")
+                    message1 = await alertchannel.send(embed=embed)
+                    await message1.publish()
+
+@client.command(name="testalert")
+async def test_alert(ctx):
+    """
+    Sends a test alert in the alerts channel.
+    """
+    guild = client.get_guild(GUILD_ID)
+    user = discord.utils.find(lambda m: m.id == ctx.message.author.id, guild.members)
+    if not user.guild_permissions.administrator:
+        await ctx.send("Permission denied")
+        return
+    alertchannel = client.get_channel(ALERT_CHANNEL)
+    embed=discord.Embed(color=0xd6001c)
+    embed.add_field(name="A new RPI alert has been posted", value="This is a test of the alert system. You may safely disregard this message.", inline=True)
+    embed.set_image(url=r"https://cdn.discordapp.com/attachments/792649866416881678/820760056395595776/Screenshot_from_2021-03-14_16-46-37.png")
+    message1 = await alertchannel.send(embed=embed)
+    await message1.publish()
+    await ctx.send("Test complete.")
+
+
+
+    
 
 @client.command(name='code')
 async def code(ctx):
@@ -150,6 +199,7 @@ async def unverify(ctx):
     user = discord.utils.find(lambda m: m.id == ctx.message.author.id, guild.members)
 
     await user.remove_roles(verified,studentrole,alumnirole)
+    ctx.send("I have removed your verified roles. Type !verify to add them again.")
 
 
 @client.command(name='verify')
