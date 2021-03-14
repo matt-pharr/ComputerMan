@@ -152,7 +152,7 @@ async def update_alerts():
                     await message1.publish()
 
 @client.command(name="testalert")
-async def test_alert(ctx):
+async def testalert(ctx):
     """
     Sends a test alert in the alerts channel.
     """
