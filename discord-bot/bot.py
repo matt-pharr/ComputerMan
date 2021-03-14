@@ -342,7 +342,7 @@ async def politics(ctx):
     verified = discord.utils.find(lambda r: r.name == 'Verified', guild.roles)
     user = discord.utils.find(lambda m: m.id == ctx.message.author.id, guild.members)
     if not (verified in user.roles):
-        ctx.send("You must verify your identity to gain access to that channel. Use `!verify` and then try again.")
+        await ctx.send("You must verify your identity to gain access to that channel. Use `!verify` and then try again.")
     else:
         if intense.permissions_for(user).read_messages:
             await intense.set_permissions(user,read_messages=False,send_messages=False)
