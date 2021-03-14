@@ -339,6 +339,9 @@ async def update(ctx):
     if ctx.message.author.guild_permissions.administrator == True:
         await ctx.send('Pulling from source...')
         os.system('git pull')
+        await asyncio.sleep(5)
+        await ctx.send('Restarting...')
+        os.system('sudo systemctl restart computerman.service')
         return
 
 @client.command(name='restart')
