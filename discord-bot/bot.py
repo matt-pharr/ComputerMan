@@ -138,7 +138,7 @@ async def update_alerts():
         async with aiohttp.ClientSession() as session:
             async with session.get(alerturl) as alerttxt:
                 content = await alerttxt.text()
-                soup = BeautifulSoup(content, features="lxml")
+                soup = BeautifulSoup(content, "lxml")
                 incident_type = "incident"
                 for incident in soup.findAll("div", {"class": incident_type}):
                     alert = html2text.html2text(str(incident))
