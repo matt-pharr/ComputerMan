@@ -146,6 +146,8 @@ async def update_alerts():
 
                 if alert == "":
                     continue
+                elif alert == None:
+                    continue
                 elif alert == lastalert:
                     continue
                 else:
@@ -153,7 +155,7 @@ async def update_alerts():
                     lastalert = alert
                     alertchannel = client.get_channel(ALERT_CHANNEL)
                     embed=discord.Embed(color=0xd6001c)
-                    embed.add_field(name="A new RPI alert has been posted", value=alert, inline=True)
+                    embed.add_field(name="A new RPI alert has been posted", value=alert.replace('\n',' '), inline=True)
                     embed.set_image(url=r"https://cdn.discordapp.com/attachments/792649866416881678/820760056395595776/Screenshot_from_2021-03-14_16-46-37.png")
                     message1 = await alertchannel.send(embed=embed)
                     await message1.publish()
