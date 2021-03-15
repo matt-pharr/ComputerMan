@@ -16,6 +16,7 @@ from email.mime.text import MIMEText
 from email.utils import formatdate
 import aiohttp
 from bs4 import BeautifulSoup
+import html2text
 
 
 print(os.getcwd())

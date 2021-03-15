@@ -3,6 +3,7 @@ import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
 import re
+import html2text
 
 async def check_is_student(rcs):
     base = r'http://info.rpi.edu/directory-search/'
