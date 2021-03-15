@@ -141,6 +141,7 @@ async def update_alerts():
                 content = await alerttxt.text()
                 soup = BeautifulSoup(content, "lxml")
                 incident_type = "incident"
+                alert = None
                 for incident in soup.findAll("div", {"class": incident_type}):
                     alert = html2text.html2text(str(incident))
 
