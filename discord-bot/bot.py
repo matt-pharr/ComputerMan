@@ -129,7 +129,7 @@ async def update_stats():
         await asyncio.sleep(1800)
 
 async def update_alerts():
-    await client.wait_until_ready
+    await client.wait_until_ready()
     await asyncio.sleep(20)
     print("alerts updater running")
     alerturl = r'https://alert.rpi.edu/'
