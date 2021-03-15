@@ -37,27 +37,30 @@ async def check_is_student(rcs):
                         return (l[i+1] == '',l[i+1],re.search(r'>[\s,\S]{1,}<',l[0],re.M).group(0).strip('<').strip('>').strip())
                 return (False,'Not Found',None)
 
-# async def update_alerts():
-#     alerturl = r'https://alert.rpi.edu/alerts.js'
-#     lastalert = ""
-#     while True:
-#         await asyncio.sleep(10)
-#         async with aiohttp.ClientSession() as session:
-#             async with session.get(alerturl) as alerttxt:
-#                 content = await alerttxt.text()
-#                 # print(repr(content))
-#                 # print(content.splitlines()[0][:-1][16:].strip("\""))
-#                 alert = content.splitlines()[0][:-1][16:].strip("\"")
-#                 if alert == "":
-#                     continue
-#                 elif alert == lastalert:
-#                     continue
-#                 else:
-#                     # A new RPI alert has been posted.
-    
+async def update_alerts():
+    alerturl = r'https://alert.rpi.edu/alerts.js'
+    lastalert = ""
+    while True:
+        await asyncio.sleep(10)
+        async with aiohttp.ClientSession() as session:
+            async with session.get(alerturl) as alerttxt:
+                content = await alerttxt.text()
+                soup = BeautifulSoup(content, features="lxml")
+                incident_type = "incident"
+                for incident in soup.findAll("div", {"class": incident_type}):
+                    alert = html2text.html2text(str(incident))
+                # print(repr(content))
+                # print(content.splitlines()[0][:-1][16:].strip("\""))
+                # alert = content.splitlines()[0][:-1][16:].strip("\"")
+                if alert == "":
+                    continue
+                elif alert == lastalert:
+                    continue
+                else:
+                    return alert
 
 async def checkprint(rcs):
-    val = await check_is_student(rcs)
+    val = await update_alerts()
     print(val)
 
 if __name__ == "__main__":

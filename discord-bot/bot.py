@@ -15,6 +15,7 @@ import typing
 from email.mime.text import MIMEText
 from email.utils import formatdate
 import aiohttp
+from bs4 import BeautifulSoup
 
 
 print(os.getcwd())
@@ -130,14 +131,18 @@ async def update_alerts():
     await client.wait_until_ready
     await asyncio.sleep(20)
     print("alerts updater running")
-    alerturl = r'https://alert.rpi.edu/alerts.js'
+    alerturl = r'https://alert.rpi.edu/'
     lastalert = ""
     while True:
         await asyncio.sleep(10)
         async with aiohttp.ClientSession() as session:
             async with session.get(alerturl) as alerttxt:
                 content = await alerttxt.text()
-                alert = content.splitlines()[0][:-1][16:].strip("\"")
+                soup = BeautifulSoup(content, features="lxml")
+                incident_type = "incident"
+                for incident in soup.findAll("div", {"class": incident_type}):
+                    alert = html2text.html2text(str(incident))
+
                 if alert == "":
                     continue
                 elif alert == lastalert:
