@@ -135,7 +135,7 @@ async def update_alerts():
     alerturl = r'https://alert.rpi.edu/'
     lastalert = ""
     while True:
-        await asyncio.sleep(10)
+        await asyncio.sleep(600)
         async with aiohttp.ClientSession() as session:
             async with session.get(alerturl) as alerttxt:
                 content = await alerttxt.text()
