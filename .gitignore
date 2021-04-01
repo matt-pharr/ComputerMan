@@ -5,3 +5,5 @@ credentials.json
 token.pickle
 discord-bot/locallib/__pycache__/
 discord-bot/config.json
+discord-bot/locallib/directoryscrape.py
+gmailscraper.py

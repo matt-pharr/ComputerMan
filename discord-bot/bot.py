@@ -104,7 +104,7 @@ class WelcomeBot(commands.Cog):
     async def on_member_join(self, member):
         channel = member.guild.system_channel
         if channel is not None:
-            await channel.send(f"Hello {member.mention}! Welcome to the /r/RPI Discord server. Most of the talk happens in student and alumni-only channels. You can go to #bots and send !verify to get verified if you're an RPI student, or go to #welcome if you're an alum. If you're an incoming student, just say so and we will give you the role.")
+            await channel.send(f"Hello {member.mention}! Welcome to the /r/WPI Discord server. Most of the talk happens in student and alumni-only channels. You can go to #bots and send !verify to get verified if you're an RPI student, or go to #welcome if you're an alum. If you're an incoming student, just say so and we will give you the role.")
 
     @commands.command(name='welcome')
     async def welcome(self, ctx):
