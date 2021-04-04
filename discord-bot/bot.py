@@ -266,12 +266,12 @@ async def verify(ctx):
 
     ## Searches the directory and checks whether the given RCS id is a student:
 
-    with open('data/directory.json','r') as f:
-        directory = json.load(f)
+    # with open('data/directory.json','r') as f:
+        # directory = json.load(f)
 
-    if email in directory.keys():
+    # if email in directory.keys():
         # for future implementation
-        pass          
+        # pass          
     
     dsearch = await directorysearch.check_is_student(rcs)
 
