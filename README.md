@@ -1,6 +1,6 @@
-# ComputerMan
+# ComputerMan / Roaree
 
-a Discord bot for the RPI student server.
+a Discord bot developed for the RPI/Columbia student servers.
 
 Currnently a work in progress. Planned features include
 
@@ -10,11 +10,11 @@ Currnently a work in progress. Planned features include
 - Moderation capabilities, including kicking, banning, muting
 - Various student information capabilities such as forwarding public safety alerts, retrieving catalog information, and professor information
 
+This repository will not be updated in the future. The working version is now at https://github.com/rshin7/roaree
+
 Projects for later versions include:
 
-- Optional adding and removing of new roles? (We don't currently have major roles in the RPI server but that could be explored)
-- rpi mailing list updates
+- Optional adding and removing of roles? 
 - LaTeX rendering
 - verification for alums?
 - setup program to get initial scrape data and set majors/etc
-- more SIS-man themed fun
